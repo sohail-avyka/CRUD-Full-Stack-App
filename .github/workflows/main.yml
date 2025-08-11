@@ -32,7 +32,7 @@ jobs:
       run: |
         ARTIFACT_TAG="CRUD-ngfe:${{ steps.version.outputs.version }}"
         echo "artifact_tag=$ARTIFACT_TAG" >> $GITHUB_OUTPUT
-        shell: bash
+      shell: bash
         
     - name: Print version
       run: echo "Generated Artifact Tag - ${{ steps.formatted.outputs.artifact_tag }}"
