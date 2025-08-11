@@ -30,8 +30,7 @@ jobs:
     #     git push origin "$new_tag"
     
     - name: Git Version
-      # id: version
-      id: formatted
+      id: version
       uses: codacy/git-version@2.4.0
       with:
         release-branch: main
@@ -48,7 +47,7 @@ jobs:
     #   shell: bash
         
     - name: Print version
-      run: echo "Generated Artifact Tag - ${{ steps.formatted.outputs.artifact_tag }}"
+      run: echo "Generated Artifact Tag - ${{ steps.version.outputs.version }}"
 
     #   # Authenticate to DigitalOcean Container Registry
     # - name: Log in to DigitalOcean Container Registry
