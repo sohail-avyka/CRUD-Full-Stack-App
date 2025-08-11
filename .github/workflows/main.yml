@@ -20,46 +20,47 @@ jobs:
       with:
         fetch-depth: 0  # Important to get full git history
 
-    - name: Bump version tag
-      run: |
-        latest_tag=$(git describe --tags --abbrev=0 2>/dev/null || echo "0.0.0")
-        IFS='.' read -r major minor patch <<< "$latest_tag"
-        patch=$((patch + 1))
-        new_tag="$major.$minor.$patch"
-        git tag "$new_tag"
-        git push origin "$new_tag"
+    # - name: Bump version tag
+    #   run: |
+    #     latest_tag=$(git describe --tags --abbrev=0 2>/dev/null || echo "0.0.0")
+    #     IFS='.' read -r major minor patch <<< "$latest_tag"
+    #     patch=$((patch + 1))
+    #     new_tag="$major.$minor.$patch"
+    #     git tag "$new_tag"
+    #     git push origin "$new_tag"
     
     - name: Git Version
-      id: version
+      # id: version
+      id: formatted
       uses: codacy/git-version@2.4.0
       with:
         release-branch: main
         dev-branch: dev
-        prefix: ""
+        prefix: 'crud-ngfe:'
         log-paths: CRUD-Full-Stack-App/angular-frontend
 
-      # Format the version as "CRUD-ngfe:x.y.z"
-    - name: Format version for artifact
-      id: formatted
-      run: |
-        ARTIFACT_TAG="crud-ngfe:${{ steps.version.outputs.version }}"
-        echo "artifact_tag=$ARTIFACT_TAG" >> $GITHUB_OUTPUT
-      shell: bash
+    #   # Format the version as "CRUD-ngfe:x.y.z"
+    # - name: Format version for artifact
+    #   id: formatted
+    #   run: |
+    #     ARTIFACT_TAG="crud-ngfe:${{ steps.version.outputs.version }}"
+    #     echo "artifact_tag=$ARTIFACT_TAG" >> $GITHUB_OUTPUT
+    #   shell: bash
         
     - name: Print version
       run: echo "Generated Artifact Tag - ${{ steps.formatted.outputs.artifact_tag }}"
 
-      # Authenticate to DigitalOcean Container Registry
-    - name: Log in to DigitalOcean Container Registry
-      run: echo "${{ secrets.DO_API_TOKEN }}" | docker login registry.digitalocean.com -u "${{ secrets.DO_API_EMAIL }}" --password-stdin
+    #   # Authenticate to DigitalOcean Container Registry
+    # - name: Log in to DigitalOcean Container Registry
+    #   run: echo "${{ secrets.DO_API_TOKEN }}" | docker login registry.digitalocean.com -u "${{ secrets.DO_API_EMAIL }}" --password-stdin
     
-    - name: Build Docker image
-      run: |
-        IMAGE=registry.digitalocean.com/poc-reg/${{ steps.formatted.outputs.artifact_tag }}
-        docker build -t $IMAGE ./angular-frontend/
+    # - name: Build Docker image
+    #   run: |
+    #     IMAGE=registry.digitalocean.com/poc-reg/${{ steps.formatted.outputs.artifact_tag }}
+    #     docker build -t $IMAGE ./angular-frontend/
       
-      # Push Docker image
-    - name: Push Docker image
-      run: |
-        IMAGE=registry.digitalocean.com/poc-reg/${{ steps.formatted.outputs.artifact_tag }}
-        docker push $IMAGE
+    #   # Push Docker image
+    # - name: Push Docker image
+    #   run: |
+    #     IMAGE=registry.digitalocean.com/poc-reg/${{ steps.formatted.outputs.artifact_tag }}
+    #     docker push $IMAGE
