@@ -11,8 +11,8 @@ jobs:
   build:
     runs-on: ubuntu-latest
     environment: POC
-    permissions:
-      contents: write  # Needed to push tags
+    # permissions:
+    #   contents: write  # Needed to push tags
 
     steps:
     - name: Checkout repo
@@ -49,17 +49,17 @@ jobs:
     - name: Print version
       run: echo "Generated Artifact Tag - ${{ steps.version.outputs.version }}"
 
-    #   # Authenticate to DigitalOcean Container Registry
-    # - name: Log in to DigitalOcean Container Registry
-    #   run: echo "${{ secrets.DO_API_TOKEN }}" | docker login registry.digitalocean.com -u "${{ secrets.DO_API_EMAIL }}" --password-stdin
+      # Authenticate to DigitalOcean Container Registry
+    - name: Log in to DigitalOcean Container Registry
+      run: echo "${{ secrets.DO_API_TOKEN }}" | docker login registry.digitalocean.com -u "${{ secrets.DO_API_EMAIL }}" --password-stdin
     
-    # - name: Build Docker image
-    #   run: |
-    #     IMAGE=registry.digitalocean.com/poc-reg/${{ steps.formatted.outputs.artifact_tag }}
-    #     docker build -t $IMAGE ./angular-frontend/
+    - name: Build Docker image
+      run: |
+        IMAGE=registry.digitalocean.com/poc-reg/${{ steps.formatted.outputs.artifact_tag }}
+        docker build -t $IMAGE ./angular-frontend/
       
-    #   # Push Docker image
-    # - name: Push Docker image
-    #   run: |
-    #     IMAGE=registry.digitalocean.com/poc-reg/${{ steps.formatted.outputs.artifact_tag }}
-    #     docker push $IMAGE
+      # Push Docker image
+    - name: Push Docker image
+      run: |
+        IMAGE=registry.digitalocean.com/poc-reg/${{ steps.formatted.outputs.artifact_tag }}
+        docker push $IMAGE
