@@ -25,7 +25,7 @@ RUN npm run build
 # Use the official Nginx image
 FROM nginx:alpine
 
-# Remove all files from the default Nginx HTML directory
+# Remove all files from the default Nginx HTML directory.
 RUN rm -rf /usr/share/nginx/html/*
 
 # Copy the build output from the Node.js build stage to the Nginx HTML directory
