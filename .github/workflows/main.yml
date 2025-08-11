@@ -25,11 +25,11 @@ jobs:
         prefix: ""
         log-paths: CRUD-Full-Stack-App/angular-frontend
 
-      # Format the version as "CRUD-ngfe-:x.y.z"
+      # Format the version as "CRUD-ngfe:x.y.z"
     - name: Format version for artifact
       id: formatted
       run: |
-        ARTIFACT_TAG="CRUD-ngfe-:${{ steps.version.outputs.version }}"
+        ARTIFACT_TAG="CRUD-ngfe:${{ steps.version.outputs.version }}"
         echo "artifact_tag=$ARTIFACT_TAG" >> $GITHUB_OUTPUT
         shell: bash
         
