@@ -28,7 +28,7 @@ FROM nginx:alpine
 # Remove all files from the default Nginx HTML directory.
 RUN rm -rf /usr/share/nginx/html/*
 
-# Copy the build output from the Node.js build stage to the Nginx HTML directory
+# Copy the build output from the Node.js build stage to the Nginx HTML directory.
 COPY --from=build /home/node/app-frontend/dist/angular-frontend/ /usr/share/nginx/html/
 
 # Copy the custom Nginx configuration file to the appropriate location and removing old default.conf
