@@ -38,8 +38,8 @@ jobs:
       run: echo "Generated Artifact Tag - ${{ steps.formatted.outputs.artifact_tag }}"
 
       # Authenticate to DigitalOcean Container Registry
-    - name: Authenticate with DigitalOcean Container Registry
-      run: echo "${{ secrets.DIGITALOCEAN_ACCESS_TOKEN }}" | docker login registry.digitalocean.com -u doctl --password-stdin
+    - name: Log in to DigitalOcean Container Registry
+      run: echo "${{ secrets.DO_API_TOKEN }}" | docker login registry.digitalocean.com -u "${{ secrets.DO_API_EMAIL }}" --password-stdin
     
     - name: Build Docker image
       run: |
