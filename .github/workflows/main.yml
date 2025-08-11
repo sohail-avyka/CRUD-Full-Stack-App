@@ -7,27 +7,7 @@ on:
     branches: [ "main" ]
 
 jobs:
-  check-changes:
-    runs-on: ubuntu-latest
-    outputs:
-      code_changed: ${{ steps.filter.outputs.code }}
-    steps:
-      - uses: actions/checkout@v4
-        with:
-          fetch-depth: 0
-
-      # Filter changes to only run build if code changes
-      - name: Check for app code changes
-        id: filter
-        uses: dorny/paths-filter@v3
-        with:
-          filters: |
-            code:
-              - 'angular-frontend/**'
-              - 'springboot-backend/**'
   build:
-    needs: check-changes
-    if: needs.check-changes.outputs.code_changed == 'true'
     runs-on: ubuntu-latest
     environment: POC
     permissions:
@@ -47,8 +27,10 @@ jobs:
         release-branch: main
         dev-branch: dev
         prefix: 'crud-ngfe-'
-        log-paths: CRUD-Full-Stack-App/angular-frontend
-
+        log-paths: |
+          angular-frontend
+          springboot-backend
+          
     # Convert Git tag to Docker tag
     - name: Convert Git tag to Docker tag
       id: docker_tag
