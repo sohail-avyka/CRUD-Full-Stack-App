@@ -1,7 +1,6 @@
 name: Version Testing
 
 on: 
-# workflow_dispatch
   push:
     branches: [ "main" ]
   pull_request:
@@ -20,46 +19,37 @@ jobs:
       with:
         fetch-depth: 0  # Important to get full git history
 
-    # - name: Bump version tag
-    #   run: |
-    #     latest_tag=$(git describe --tags --abbrev=0 2>/dev/null || echo "0.0.0")
-    #     IFS='.' read -r major minor patch <<< "$latest_tag"
-    #     patch=$((patch + 1))
-    #     new_tag="$major.$minor.$patch"
-    #     git tag "$new_tag"
-    #     git push origin "$new_tag"
-    
     - name: Git Version
       id: version
       uses: codacy/git-version@2.4.0
       with:
         release-branch: main
         dev-branch: dev
-        prefix: 'crud-ngfe:'
+        prefix: 'crud-ngfe-'
         log-paths: CRUD-Full-Stack-App/angular-frontend
 
-    #   # Format the version as "CRUD-ngfe:x.y.z"
-    # - name: Format version for artifact
-    #   id: formatted
-    #   run: |
-    #     ARTIFACT_TAG="crud-ngfe:${{ steps.version.outputs.version }}"
-    #     echo "artifact_tag=$ARTIFACT_TAG" >> $GITHUB_OUTPUT
-    #   shell: bash
-        
-    - name: Print version
-      run: echo "Generated Artifact Tag - ${{ steps.version.outputs.version }}"
+    - name: Convert version for Docker
+      id: docker_version
+      run: |
+        # Replace first "-" with ":"
+        DOCKER_TAG="${{ steps.version.outputs.version }}"
+        DOCKER_TAG="${DOCKER_TAG/-/:}"
+        echo "docker_tag=$DOCKER_TAG" >> $GITHUB_OUTPUT
 
-      # Authenticate to DigitalOcean Container Registry
+    - name: Print versions
+      run: |
+        echo "Git Tag Version - ${{ steps.version.outputs.version }}"
+        echo "Docker Tag Version - ${{ steps.docker_version.outputs.docker_tag }}"
+
     - name: Log in to DigitalOcean Container Registry
       run: echo "${{ secrets.DO_API_TOKEN }}" | docker login registry.digitalocean.com -u "${{ secrets.DO_API_EMAIL }}" --password-stdin
     
     - name: Build Docker image
       run: |
-        IMAGE=registry.digitalocean.com/poc-reg/${{ steps.version.outputs.version }}
+        IMAGE=registry.digitalocean.com/poc-reg/${{ steps.docker_version.outputs.docker_tag }}
         docker build -t $IMAGE ./angular-frontend/
       
-      # Push Docker image
     - name: Push Docker image
       run: |
-        IMAGE=registry.digitalocean.com/poc-reg/${{ steps.version.outputs.version }}
+        IMAGE=registry.digitalocean.com/poc-reg/${{ steps.docker_version.outputs.docker_tag }}
         docker push $IMAGE
