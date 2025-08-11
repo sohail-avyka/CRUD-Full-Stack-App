@@ -37,16 +37,16 @@ jobs:
     - name: Print version
       run: echo "Generated Artifact Tag - ${{ steps.formatted.outputs.artifact_tag }}"
 
-    #   # Authenticate to DigitalOcean Container Registry
-    # - name: Authenticate with DigitalOcean Container Registry
-    #   run: echo "${{ secrets.DIGITALOCEAN_ACCESS_TOKEN }}" | docker login registry.digitalocean.com -u doctl --password-stdin
+      # Authenticate to DigitalOcean Container Registry
+    - name: Authenticate with DigitalOcean Container Registry
+      run: echo "${{ secrets.DIGITALOCEAN_ACCESS_TOKEN }}" | docker login registry.digitalocean.com -u doctl --password-stdin
     
-    # - name: Build Docker image
-    #   run: |
-    #     IMAGE=registry.digitalocean.com/YOUR_REGISTRY_NAME/${{ steps.formatted.outputs.artifact_tag }}
-    #     docker build -t $IMAGE .
-    #   # Push Docker image
-    # - name: Push Docker image
-    #   run: |
-    #     IMAGE=registry.digitalocean.com/YOUR_REGISTRY_NAME/${{ steps.formatted.outputs.artifact_tag }}
-    #     docker push $IMAGE
+    - name: Build Docker image
+      run: |
+        IMAGE=registry.digitalocean.com/poc-reg/${{ steps.formatted.outputs.artifact_tag }}
+        docker build -t $IMAGE ./CRUD-Full-Stack-App/angular-frontend/
+      # Push Docker image
+    - name: Push Docker image
+      run: |
+        IMAGE=registry.digitalocean.com/poc-reg/${{ steps.formatted.outputs.artifact_tag }}
+        docker push $IMAGE
