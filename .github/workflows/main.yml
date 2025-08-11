@@ -11,14 +11,15 @@ jobs:
     runs-on: ubuntu-latest
     environment: POC
     permissions:
-      contents: write  # Needed to push tags
+      contents: write
 
     steps:
     - name: Checkout repo
       uses: actions/checkout@v4
       with:
-        fetch-depth: 0  # Important to get full git history
+        fetch-depth: 0
 
+    # Get Git version from codacy/git-version
     - name: Git Version
       id: version
       uses: codacy/git-version@2.4.0
@@ -28,28 +29,26 @@ jobs:
         prefix: 'crud-ngfe-'
         log-paths: CRUD-Full-Stack-App/angular-frontend
 
-    - name: Convert version for Docker
-      id: docker_version
+    # Convert Git tag to Docker tag
+    - name: Convert Git tag to Docker tag
+      id: docker_tag
       run: |
-        # Replace first "-" with ":"
-        DOCKER_TAG="${{ steps.version.outputs.version }}"
-        DOCKER_TAG="${DOCKER_TAG/-/:}"
+        GIT_TAG="${{ steps.version.outputs.version }}"
+        DOCKER_TAG="${GIT_TAG%-*}:${GIT_TAG##*-}"
+        echo "Git Tag Version - $GIT_TAG"
+        echo "Docker Tag Version - $DOCKER_TAG"
         echo "docker_tag=$DOCKER_TAG" >> $GITHUB_OUTPUT
-
-    - name: Print versions
-      run: |
-        echo "Git Tag Version - ${{ steps.version.outputs.version }}"
-        echo "Docker Tag Version - ${{ steps.docker_version.outputs.docker_tag }}"
+      shell: bash
 
     - name: Log in to DigitalOcean Container Registry
       run: echo "${{ secrets.DO_API_TOKEN }}" | docker login registry.digitalocean.com -u "${{ secrets.DO_API_EMAIL }}" --password-stdin
-    
+
     - name: Build Docker image
       run: |
-        IMAGE=registry.digitalocean.com/poc-reg/${{ steps.docker_version.outputs.docker_tag }}
+        IMAGE=registry.digitalocean.com/poc-reg/${{ steps.docker_tag.outputs.docker_tag }}
         docker build -t $IMAGE ./angular-frontend/
-      
+
     - name: Push Docker image
       run: |
-        IMAGE=registry.digitalocean.com/poc-reg/${{ steps.docker_version.outputs.docker_tag }}
+        IMAGE=registry.digitalocean.com/poc-reg/${{ steps.docker_tag.outputs.docker_tag }}
         docker push $IMAGE
