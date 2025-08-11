@@ -22,15 +22,30 @@ jobs:
       with:
         release-branch: main
         dev-branch: dev
-        prefix: CRUD-ngfe-
+        prefix: ""
         log-paths: CRUD-Full-Stack-App/angular-frontend
+
+      # Format the version as "CRUD-ngfe-:x.y.z"
+    - name: Format version for artifact
+      id: formatted
+      run: |
+        ARTIFACT_TAG="CRUD-ngfe-:${{ steps.version.outputs.version }}"
+        echo "artifact_tag=$ARTIFACT_TAG" >> $GITHUB_OUTPUT
+        shell: bash
         
     - name: Print version
-      run: echo "Generated Version - ${{ steps.version.outputs.version }}"
+      run: echo "Generated Artifact Tag - ${{ steps.formatted.outputs.artifact_tag }}"
 
-    # - name: Create Git Tag
+    #   # Authenticate to DigitalOcean Container Registry
+    # - name: Authenticate with DigitalOcean Container Registry
+    #   run: echo "${{ secrets.DIGITALOCEAN_ACCESS_TOKEN }}" | docker login registry.digitalocean.com -u doctl --password-stdin
+    
+    # - name: Build Docker image
     #   run: |
-    #     git config user.name "GitHub Actions"
-    #     git config user.email "actions@github.com"
-    #     git tag ${{ steps.version.outputs.version }}
-    #     git push origin ${{ steps.version.outputs.version }}
+    #     IMAGE=registry.digitalocean.com/YOUR_REGISTRY_NAME/${{ steps.formatted.outputs.artifact_tag }}
+    #     docker build -t $IMAGE .
+    #   # Push Docker image
+    # - name: Push Docker image
+    #   run: |
+    #     IMAGE=registry.digitalocean.com/YOUR_REGISTRY_NAME/${{ steps.formatted.outputs.artifact_tag }}
+    #     docker push $IMAGE
