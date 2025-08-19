@@ -10,7 +10,7 @@ RUN chown -R node:node /home/node/app-frontend
 # Copy package.json and package-lock.json with correct ownership for dependency installation
 COPY --chown=node:node package.json ./
 
-# Switch to the non-root 'node' user.
+# Switch to the non-root 'node' user
 USER node
 
 # Install dependencies and set to use the legacy provider
