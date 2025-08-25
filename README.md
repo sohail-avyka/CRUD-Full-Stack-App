@@ -1,5 +1,5 @@
 After cloning the repo,  
-Navigate to following paths and make appropiate changes in environment files.
+Navigate to following paths and make appropiate changes in environment files
 
 # AngularFrontend
 
