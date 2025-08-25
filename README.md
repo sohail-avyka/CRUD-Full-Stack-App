@@ -3,7 +3,7 @@ Navigate to following paths and make appropiate changes in environment files
 
 # AngularFrontend
 
-### "CRUD-Full-Stack-App/angular-frontend/src/environments"
+### "CRUD-Full-Stack-App/angular-frontend/src/environments"temp
 
 open **"environment.prod.ts"** and **"environment.ts"** in text editor and change value for variable **"apiIp"**
 
